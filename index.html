@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+  <title>SRC-20 Wrapper</title>
+  <style>
+    body, html {display: flex; align-items: center; justify-content: center; width:100%; height:100%; flex-direction: column;}
+    a:link, a:visited {text-decoration:none; color:lime}
+    a:hover, a:active {text-decoration: underline}
+    #loading {display: none}
+    #check-form {margin-bottom: 1rem;}
+    #message {margin-bottom: 1rem;}
+    .button {margin: 0.5rem;}
+  </style>
+</head>
+<body>
+  <div>
+    <h1>wSRC-20</h1>
+    <form id="check-form">
+      <input type="text" id="address-input" name="address-input" placeholder="Receive address" required>
+      <br><br>
+      <input type="text" id="stamp-input" name="stamp-input" placeholder="Stamp number" required>
+    </form>
+  </div>
+  <div id="message"></div>
+  <div id="loading">Loading...</div>
+  <div id="buttons">
+    <button class="button" id="validate">Validate</button>
+    <button class="button" id="wrap">Wrap</button>
+  </div>
+  <script>
+    const validateButton = document.getElementById('validate');
+    const wrapButton = document.getElementById('wrap');
+    const loading = document.getElementById('loading');
+    const message = document.getElementById('message');
+
+    let isValidCombination = false; // New variable to track validity
+
+    validateButton.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      const address = document.getElementById('address-input').value;
+      const stamp = document.getElementById('stamp-input').value;
+
+      checkData(address, stamp);
+    });
+
+    wrapButton.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      if (isValidCombination) { // Check if last validation was successful
+        wrapData();
+      } else {
+        message.textContent = 'Please validate first.';
+      }
+    });
+
+    async function checkData(address, stamp) {
+      loading.style.display = 'block';
+
+      const response = await fetch('https://stampchain.io/api/src20');
+      const data = await response.json();
+
+      const entry = data.items.find(item => item.stamp == stamp && item.creator === address);
+
+      loading.style.display = 'none';
+
+      if (entry) {
+        message.textContent = `Valid stamp and address combination! Amount: ${entry.amt}, Ticker: ${entry.tick}`;
+        isValidCombination = true; // Update validity
+      } else {
+        message.textContent = 'Invalid stamp or address, please try again.';
+        isValidCombination = false; // Update validity
+      }
+    }
+
+    function wrapData() {
+      // Existing wrapData code
+      const bitcoinAddress = document.getElementById('address-input').value;
+
+      const data = {
+        file_content: base64String,
+        target_address: bitcoinAddress,
+        file_name: fileName,
+        collection_name: collectionName,
+        creator_name: creatorName,
+        asset_lock: assetLock,
+        asset_issuance: assetIssuance,
+        action: check,
+        source: MintingServiceName
+      };
+
+      console.log('Data to be sent to API: ', data);      
+    }
+  </script>
+</body>
+</html>
