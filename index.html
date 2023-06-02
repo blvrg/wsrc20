@@ -57,23 +57,45 @@
     async function checkData(address, stamp) {
       loading.style.display = 'block';
 
-      const response = await fetch('https://raw.githubusercontent.com/crypt0biwan/src20/main/json/src20.json');
-      const data = await response.json();
+      try {
+        const stampsResponse = await fetch(`https://stampchain.io/api/stamps?creator=${address}`);
+        const stampsData = await stampsResponse.json();
 
-      const entry = data.find(item => item.stamp == stamp && item.creator === address);
+        const matchingStamp = stampsData.find(stampData => stampData.stamp === parseInt(stamp));
+        if (!matchingStamp) {
+          throw new Error('Invalid stamp or address, please try again.');
+        }
 
-      loading.style.display = 'none';
+        const src20Response = await fetch(`https://stampchain.io/api/src20?block_index=${matchingStamp.block_index}`);
+        const src20Data = await src20Response.json();
 
-      if (entry) {
-        message.textContent = `Valid stamp and address combination! Amount: ${entry.amt}, Ticker: ${entry.tick}`;
+        const matchingEntry = src20Data.items.find(entry => entry.stamp === matchingStamp.stamp && entry.creator === address);
+        if (!matchingEntry) {
+          throw new Error('Invalid stamp or address, please try again.');
+        }
+
+        message.textContent = `Valid stamp and address combination! Amount: ${matchingEntry.amt}, Ticker: ${matchingEntry.tick}`;
         isValidCombination = true; // Update validity
-      } else {
-        message.textContent = 'Invalid stamp or address, please try again.';
+
+        const codeBlock = document.createElement('code');
+        codeBlock.textContent = `token:wrap|${matchingEntry.tick}|${matchingEntry.cpid}`;
+        document.body.appendChild(codeBlock);
+      } catch (error) {
+        console.error('Error checking stamp data:', error);
+        message.textContent = 'Error checking stamp data. Please try again.';
         isValidCombination = false; // Update validity
+      } finally {
+        loading.style.display = 'none';
       }
     }
 
     function wrapData() {
+      const codeBlock = document.createElement('code');
+      const tick = document.getElementById('stamp-input').value;
+      const cpid = document.getElementById('address-input').value;
+
+      codeBlock.textContent = `token:wrap|${tick}|${cpid}`;
+      document.body.appendChild(codeBlock);
       // Existing wrapData code
       const bitcoinAddress = document.getElementById('address-input').value;
 
