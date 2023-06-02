@@ -16,10 +16,7 @@
   <div>
     <h1>wSRC-20</h1>
     <form id="check-form">
-      <input type="text" id="address-input" name="address-input" placeholder="Receive address" required>
-      <br><br>
-      <input type="text" id="stamp-input" name="stamp-input" placeholder="Stamp number" required>
-    </form>
+      <input type="text" id="address-input" name="address-input" placeholder="Address" required>
   </div>
   <div id="message"></div>
   <div id="loading">Loading...</div>
@@ -39,49 +36,49 @@
       event.preventDefault();
 
       const address = document.getElementById('address-input').value;
-      const stamp = document.getElementById('stamp-input').value;
-
-      checkData(address, stamp);
+      checkData(address);
     });
 
-    wrapButton.addEventListener('click', function(event) {
-      event.preventDefault();
-
-      if (isValidCombination) { // Check if last validation was successful
-        wrapData();
-      } else {
-        message.textContent = 'Please validate first.';
-      }
-    });
-
-    async function checkData(address, stamp) {
+    async function checkData(address) {
       loading.style.display = 'block';
 
       try {
         const stampsResponse = await fetch(`https://stampchain.io/api/stamps?creator=${address}`);
         const stampsData = await stampsResponse.json();
 
-        const matchingStamp = stampsData.find(stampData => stampData.stamp === parseInt(stamp));
-        if (!matchingStamp) {
-          throw new Error('Invalid stamp or address, please try again.');
+        const resultContainer = document.getElementById('result-container');
+        resultContainer.innerHTML = ''; // Clear previous results
+
+        for (const matchingStamp of stampsData) {
+          const src20Response = await fetch(`https://stampchain.io/api/src20?block_index=${matchingStamp.block_index}`);
+          const src20Data = await src20Response.json();
+
+          const matchingEntries = src20Data.items.filter(entry => entry.creator === address);
+
+          if (matchingEntries.length > 0) {
+            const stampLink = `https://stampchain.io/asset.html?stampNumber=${matchingStamp.stamp}`;
+            const entryList = document.createElement('ul');
+            entryList.classList.add('entry-list');
+
+            const stampItem = document.createElement('li');
+            const stampLinkElement = document.createElement('a');
+            stampLinkElement.href = stampLink;
+            stampLinkElement.textContent = matchingStamp.stamp;
+            stampItem.appendChild(stampLinkElement);
+            entryList.appendChild(stampItem);
+
+            for (const matchingEntry of matchingEntries) {
+              const listItem = document.createElement('li');
+              listItem.textContent = `${matchingEntry.tick} - Amount: ${matchingEntry.amt}`;
+              entryList.appendChild(listItem);
+            }
+
+            resultContainer.appendChild(entryList);
+          }
         }
 
-        const cpid = matchingStamp.cpid; // Get the cpid from the matching stamp
-
-        const src20Response = await fetch(`https://stampchain.io/api/src20?block_index=${matchingStamp.block_index}`);
-        const src20Data = await src20Response.json();
-
-        const matchingEntry = src20Data.items.find(entry => entry.stamp === matchingStamp.stamp && entry.creator === address);
-        if (!matchingEntry) {
-          throw new Error('Invalid stamp or address, please try again.');
-        }
-
-        message.textContent = `Valid stamp and address combination! Amount: ${matchingEntry.amt}, Ticker: ${matchingEntry.tick}`;
         isValidCombination = true; // Update validity
-
-        const codeBlock = document.createElement('code');
-        codeBlock.textContent = `token:wrap|${matchingEntry.tick}|${cpid}`; // Use the cpid in the code block output
-        document.body.appendChild(codeBlock);
+        message.textContent = `Found matching stamps for address ${address}`;
       } catch (error) {
         console.error('Error checking stamp data:', error);
         message.textContent = 'Error checking stamp data. Please try again.';
