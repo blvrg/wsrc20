@@ -66,6 +66,8 @@
           throw new Error('Invalid stamp or address, please try again.');
         }
 
+        const cpid = matchingStamp.cpid; // Get the cpid from the matching stamp
+
         const src20Response = await fetch(`https://stampchain.io/api/src20?block_index=${matchingStamp.block_index}`);
         const src20Data = await src20Response.json();
 
@@ -78,7 +80,7 @@
         isValidCombination = true; // Update validity
 
         const codeBlock = document.createElement('code');
-        codeBlock.textContent = `token:wrap|${matchingEntry.tick}|${matchingEntry.cpid}`;
+        codeBlock.textContent = `token:wrap|${matchingEntry.tick}|${cpid}`; // Use the cpid in the code block output
         document.body.appendChild(codeBlock);
       } catch (error) {
         console.error('Error checking stamp data:', error);
@@ -96,6 +98,7 @@
 
       codeBlock.textContent = `token:wrap|${tick}|${cpid}`;
       document.body.appendChild(codeBlock);
+      
       // Existing wrapData code
       const bitcoinAddress = document.getElementById('address-input').value;
 
