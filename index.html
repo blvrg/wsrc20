@@ -72,7 +72,9 @@
 
             for (const matchingEntry of matchingEntries) {
               const listItem = document.createElement('li');
-              listItem.textContent = `${matchingEntry.tick} - Amount: ${matchingEntry.amt}`;
+              const codeBlock = document.createElement('code');
+              codeBlock.textContent = `token:wrap|${matchingEntry.tick}|${matchingStamp.cpid}`;
+              listItem.appendChild(codeBlock);
               entryList.appendChild(listItem);
             }
 
