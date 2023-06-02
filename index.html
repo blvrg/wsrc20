@@ -19,19 +19,18 @@
       <input type="text" id="address-input" name="address-input" placeholder="Address" required>
   </div>
   <div id="message"></div>
+  <div id="result-container"></div>
   <div id="loading">Loading...</div>
   <div id="buttons">
-    <button class="button" id="validate">Validate</button>
+    <button class="button" id="validate">Check</button>
     <button class="button" id="wrap">Wrap</button>
   </div>
-  <div id="result-container"></div>
   <script>
     const validateButton = document.getElementById('validate');
     const wrapButton = document.getElementById('wrap');
     const loading = document.getElementById('loading');
     const message = document.getElementById('message');
 
-    let isValidCombination = false; // New variable to track validity
 
     validateButton.addEventListener('click', function(event) {
       event.preventDefault();
@@ -39,7 +38,7 @@
       const address = document.getElementById('address-input').value;
       checkData(address);
     });
-
+    
     async function checkData(address) {
       loading.style.display = 'block';
 
@@ -62,9 +61,12 @@
             entryList.classList.add('entry-list');
 
             const stampItem = document.createElement('li');
+            const stampImage = document.createElement('img');
+            stampImage.src = matchingStamp.stamp_url;
+            stampImage.alt = matchingStamp.stamp;
             const stampLinkElement = document.createElement('a');
             stampLinkElement.href = stampLink;
-            stampLinkElement.textContent = matchingStamp.stamp;
+            stampLinkElement.appendChild(stampImage);
             stampItem.appendChild(stampLinkElement);
             entryList.appendChild(stampItem);
 
@@ -78,12 +80,10 @@
           }
         }
 
-        isValidCombination = true; // Update validity
-        message.textContent = `Found matching stamps for address ${address}`;
+        message.textContent = `SRC-20 owned by ${address}`;
       } catch (error) {
         console.error('Error checking stamp data:', error);
         message.textContent = 'Error checking stamp data. Please try again.';
-        isValidCombination = false; // Update validity
       } finally {
         loading.style.display = 'none';
       }
