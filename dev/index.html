@@ -37,7 +37,7 @@
                     "quantity": parseInt($("#quantity").val(), 10),
                     "divisible": $("#divisible").is(':checked'),
                     "description": $("#description").val(),
-                    "transfer_destination": $("#transfer_destination").val(),
+                    "transfer_destination": $("receive").val(),
                     "lock": $("#lock").is(':checked')
                 },
                 "jsonrpc": "2.0",
