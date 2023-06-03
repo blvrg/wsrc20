@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Transaction</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <form id="createTxForm">
+        <label for="source">Source:</label><br>
+        <input type="text" id="source" name="source"><br>
+        <label for="asset">Asset:</label><br>
+        <input type="text" id="asset" name="asset"><br>
+        <label for="quantity">Quantity:</label><br>
+        <input type="number" id="quantity" name="quantity"><br>
+        <label for="divisible">Divisible:</label><br>
+        <input type="checkbox" id="divisible" name="divisible"><br>
+        <label for="description">Description:</label><br>
+        <input type="text" id="description" name="description"><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <pre id="result"></pre>
+
+    <script>
+        $("#createTxForm").on('submit', function(event){
+            event.preventDefault();
+
+            var data = {
+                "method": "create_issuance",
+                "params": {
+                    "source": $("#source").val(),
+                    "asset": $("#asset").val(),
+                    "quantity": $("#quantity").val(),
+                    "divisible": $("#divisible").is(':checked'),
+                    "description": $("#description").val()
+                },
+                "jsonrpc": "2.0",
+                "id": 0
+            };
+
+            $.ajax({
+                url: 'http://public.coindaddy.io:4000/api/',
+                type: 'post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    $('#result').text(JSON.stringify(data, null, 2));
+                },
+                data: JSON.stringify(data)
+            });
+        });
+    </script>
+</body>
+</html>
