@@ -39,9 +39,12 @@
             };
 
             $.ajax({
-                url: 'https://public.coindaddy.io:4000/api/',
+                url: 'http://public.coindaddy.io:4000/api/',
                 type: 'post',
                 dataType: 'json',
+                headers: {
+                    "Authorization": "Basic " + btoa("rpc:1234")
+                },
                 contentType: 'application/json',
                 success: function (data) {
                     $('#result').text(JSON.stringify(data, null, 2));
