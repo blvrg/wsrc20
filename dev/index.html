@@ -34,7 +34,7 @@
                 "params": {
                     "source": $("#source").val(),
                     "asset": $("#asset").val(),
-                    "quantity": $("#quantity").val(),
+                    "quantity": parseInt($("#quantity").val(), 10),
                     "divisible": $("#divisible").is(':checked'),
                     "description": $("#description").val(),
                     "transfer_destination": $("#transfer_destination").val(),
