@@ -8,12 +8,16 @@
     <form id="createTxForm">
         <label for="source">Source:</label><br>
         <input type="text" id="source" name="source"><br>
+        <label for="receive">Receive:</label><br>
+        <input type="text" id="receive" name="receive"><br>        
         <label for="asset">Asset:</label><br>
         <input type="text" id="asset" name="asset"><br>
         <label for="quantity">Quantity:</label><br>
         <input type="number" id="quantity" name="quantity"><br>
         <label for="divisible">Divisible:</label><br>
         <input type="checkbox" id="divisible" name="divisible"><br>
+        <label for="locked">Locked:</label><br>
+        <input type="checkbox" id="locked" name="locked"><br>
         <label for="description">Description:</label><br>
         <input type="text" id="description" name="description"><br>
         <input type="submit" value="Submit">
@@ -29,9 +33,11 @@
                 "method": "create_issuance",
                 "params": {
                     "source": $("#source").val(),
+                    "transfer_destination": $("#receive").val(),
                     "asset": $("#asset").val(),
                     "quantity": $("#quantity").val(),
                     "divisible": $("#divisible").is(':checked'),
+                    "lock": $("#locked").is(':checked'),                    
                     "description": $("#description").val()
                 },
                 "jsonrpc": "2.0",
