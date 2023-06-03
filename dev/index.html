@@ -7,9 +7,7 @@
 <body>
     <form id="createTxForm">
         <label for="source">Source:</label><br>
-        <input type="text" id="source" name="source"><br>
-        <label for="receive">Receive:</label><br>
-        <input type="text" id="receive" name="receive"><br>        
+        <input type="text" id="source" name="source"><br>   
         <label for="asset">Asset:</label><br>
         <input type="text" id="asset" name="asset"><br>
         <label for="quantity">Quantity:</label><br>
@@ -26,36 +24,39 @@
     <pre id="result"></pre>
 
     <script>
-        $("#createTxForm").on('submit', function(event){
+        document.getElementById("createTxForm").addEventListener('submit', function(event){
             event.preventDefault();
 
             var data = {
                 "method": "create_issuance",
                 "params": {
-                    "source": $("#source").val(),
-                    "transfer_destination": $("#receive").val(),
-                    "asset": $("#asset").val(),
-                    "quantity": $("#quantity").val(),
-                    "divisible": $("#divisible").is(':checked'),
-                    "lock": $("#locked").is(':checked'),                    
-                    "description": $("#description").val()
+                    "source": document.getElementById("source").value,
+                    "asset": document.getElementById("asset").value,
+                    "quantity": parseInt(document.getElementById("quantity").value, 10),
+                    "divisible": document.getElementById("divisible").checked,
+                    "lock": document.getElementById("locked").checked,
+                    "description": document.getElementById("description").value,
+                    "transfer_destination": document.getElementById("receive").value,
+                    "lock": document.getElementById("lock").checked
                 },
                 "jsonrpc": "2.0",
                 "id": 0
             };
 
-            $.ajax({
-                url: 'https://public.coindaddy.io:4001/api/',
-                type: 'post',
-                dataType: 'json',
+            fetch('https://public.coindaddy.io:4001/api/', {
+                method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     "Authorization": "Basic " + btoa("rpc:1234")
                 },
-                contentType: 'application/json',
-                success: function (data) {
-                    $('#result').text(JSON.stringify(data, null, 2));
-                },
-                data: JSON.stringify(data)
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
             });
         });
     </script>
