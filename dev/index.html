@@ -14,8 +14,8 @@
         <input type="number" id="quantity" name="quantity"><br>
         <label for="divisible">Divisible:</label><br>
         <input type="checkbox" id="divisible" name="divisible"><br>
-        <label for="locked">Locked:</label><br>
-        <input type="checkbox" id="locked" name="locked"><br>
+        <label for="lock">Lock:</label><br>
+        <input type="checkbox" id="lock" name="lock"><br>
         <label for="description">Description:</label><br>
         <input type="text" id="description" name="description"><br>
         <input type="submit" value="Submit">
@@ -34,9 +34,8 @@
                     "asset": document.getElementById("asset").value,
                     "quantity": parseInt(document.getElementById("quantity").value, 10),
                     "divisible": document.getElementById("divisible").checked,
-                    "lock": document.getElementById("locked").checked,
+                    "lock": document.getElementById("lock").checked,
                     "description": document.getElementById("description").value,
-                    "lock": document.getElementById("lock").checked
                 },
                 "jsonrpc": "2.0",
                 "id": 0
