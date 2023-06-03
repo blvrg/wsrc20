@@ -8,16 +8,12 @@
     <form id="createTxForm">
         <label for="source">Source:</label><br>
         <input type="text" id="source" name="source"><br>
-        <label for="receive">Receive:</label><br>
-        <input type="text" id="receive" name="receive"><br>
         <label for="asset">Asset:</label><br>
         <input type="text" id="asset" name="asset"><br>
         <label for="quantity">Quantity:</label><br>
         <input type="number" id="quantity" name="quantity"><br>
         <label for="divisible">Divisible:</label><br>
         <input type="checkbox" id="divisible" name="divisible"><br>
-        <label for="locked">Locked:</label><br>
-        <input type="checkbox" id="locked" name="locked"><br>
         <label for="description">Description:</label><br>
         <input type="text" id="description" name="description"><br>
         <input type="submit" value="Submit">
@@ -34,11 +30,9 @@
                 "params": {
                     "source": $("#source").val(),
                     "asset": $("#asset").val(),
-                    "quantity": parseInt($("#quantity").val(), 10),
+                    "quantity": $("#quantity").val(),
                     "divisible": $("#divisible").is(':checked'),
-                    "description": $("#description").val(),
-                    "transfer_destination": $("receive").val(),
-                    "lock": $("#lock").is(':checked')
+                    "description": $("#description").val()
                 },
                 "jsonrpc": "2.0",
                 "id": 0
@@ -48,18 +42,16 @@
                 url: 'https://public.coindaddy.io:4001/api/',
                 type: 'post',
                 dataType: 'json',
-                contentType: 'application/json',
                 headers: {
                     "Authorization": "Basic " + btoa("rpc:1234")
                 },
+                contentType: 'application/json',
                 success: function (data) {
                     $('#result').text(JSON.stringify(data, null, 2));
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
                 },
                 data: JSON.stringify(data)
             });
         });
+    </script>
 </body>
 </html>
